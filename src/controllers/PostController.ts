@@ -27,7 +27,7 @@ export const getPosts = async (c: Context) => {
             data: posts
         }, 200)
     } catch (err) {
-        return c.json({ success: false, message: err }, 500)
+        return c.json({ success: false, message: "Server error" }, 500)
     }
 }
 
@@ -72,7 +72,7 @@ export const createPosts = async (c: Context) => {
             data: post
         }, 201)
     } catch (err) {
-        return c.json({ success: false, message: err }, 500)
+        return c.json({ success: false, message: "Server error" }, 500)
     }
 }
 
@@ -93,6 +93,34 @@ export const getPostById = async (c: Context) => {
 
         return c.json({ success: true, message:`Detail data post by id: ${postId}`, data: post }, 200)
     } catch (err: unknown) {
-        return c.json({ success: false, message: err }, 500)
+        return c.json({ success: false, message: "Server Error" }, 500)
+    }
+}
+
+export const updatePost = async (c: Context) => {
+    try {
+        const postId = parseInt(c.req.param('id'))
+
+        const body = await c.req.parseBody()
+
+        const title = typeof body['title'] === 'string' ? body['title'] : ''
+        const content = typeof body['content'] === 'string' ? body['content'] : ''
+
+        const post = await prisma.post.update({
+            where: { id: postId },
+            data: {
+                title: title,
+                content: content,
+                updatedAt: new Date()
+            }
+        })
+
+        return c.json({
+            success: true,
+            message: 'Post updated Successfully!',
+            data: post
+        }, 200)
+    } catch (err) {
+        return c.json({ success: false, message: "Server Error" }, 500)
     }
 }
