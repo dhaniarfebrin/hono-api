@@ -75,3 +75,24 @@ export const createPosts = async (c: Context) => {
         return c.json({ success: false, message: err }, 500)
     }
 }
+
+export const getPostById = async (c: Context) => { 
+    try {
+        const postId = parseInt(c.req.param('id'))
+
+        const post = await prisma.post.findUnique({
+            where: {id: postId}
+        })
+
+        if (!post) {
+            return c.json({
+                success: false,
+                message: 'Post not found'
+            }, 404)
+        }
+
+        return c.json({ success: true, message:`Detail data post by id: ${postId}`, data: post }, 200)
+    } catch (err: unknown) {
+        return c.json({ success: false, message: err }, 500)
+    }
+}
