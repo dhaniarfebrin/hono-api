@@ -124,3 +124,20 @@ export const updatePost = async (c: Context) => {
         return c.json({ success: false, message: "Server Error" }, 500)
     }
 }
+
+export const deletePost = async (c: Context) => {
+    try {
+        const postId = parseInt(c.req.param('id'))
+
+        await prisma.post.delete({
+            where: { id: postId }
+        })
+
+        return c.json({
+            success: true,
+            message: 'Post Deleted Successfully'
+        }, 200)
+    } catch (err) {
+        return c.json({ success: false, message: "Server Error" }, 500)
+    }
+}
